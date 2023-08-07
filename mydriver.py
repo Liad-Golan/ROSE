@@ -1,9 +1,8 @@
 from rose.common import obstacles, actions  # NOQA
 
-driver_name = "Itay(?)"
+driver_name = "Itay(maybe good?)"
 
 find2 = True
-goal = False
 GoodList = [obstacles.PENGUIN,obstacles.CRACK,obstacles.WATER] #obstacles that earn points
 ActionList = [actions.LEFT,actions.NONE,actions.RIGHT]
 def worthcheck(world):
@@ -21,7 +20,7 @@ def drive(world):
     for i in range(1,4): # i = line we're checking
         list = []
         for j in range(1+2*(i)): #j = square in line we're cheking
-            if (pos[0]-i+j>0) and (pos[0]-i+j<5):
+            if (pos[0]-i+j>=0) and (pos[0]-i+j<=5):
                 list.append(world.get((pos[0]-i+j,pos[1]-i)))
             else:
                 list.append("B")
@@ -75,7 +74,7 @@ def drive(world):
                     if GoodList.index(obst) <= GoodList.index(cur):
                         break
                 if vision[2][2+i] == cur and (vision[1][i+1] == obstacles.NONE or vision[1][i+1] == obstacles.PENGUIN):
-                    if i<=(fin+st/2):
+                    if i<=((fin+st)/2):
                         return act[0]
                     else:
                         return act[-1]
@@ -92,6 +91,6 @@ def drive(world):
             return actions.RIGHT
         if pos[0] > home[0] and vision[0][0] == obstacles.NONE:
             return actions.LEFT
-    return actions.NONE
+    return actions.NONE 
 
 #python rose-client -s 128.52.61.161 mydriver.py
