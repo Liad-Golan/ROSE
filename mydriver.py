@@ -46,41 +46,11 @@ def drive(world):
                 return actions.LEFT
         if (vision[0][0] != obstacles.NONE and vision[0][0] != obstacles.PENGUIN) and (vision[0][2] != obstacles.NONE and vision[0][2] != obstacles.PENGUIN):
             return actions.NONE
-        best = -1
-        obst = None
-        found = False
+        #searches the 3 squares which are 2 infront of him(ones that are achivable.
         for i in range(3):
             for cur in GoodList:
                 if vision[1][i+1] == cur and (vision[0][i] == obstacles.NONE or vision[0][i] == obstacles.PENGUIN):
-                    found = True
-                    best = i
-                    obst = cur
-                    if cur == GoodList[0]:
-                        return ActionList[i]
-                    break
-            if found:
-                break
-        st = 0
-        fin = 4
-        act = [actions.LEFT,actions.NONE,actions.RIGHT]
-        if (vision[0][0] != obstacles.PENGUIN and vision[0][0] != obstacles.NONE):
-            st = 1
-            act.remove(actions.LEFT)
-        elif (vision[0][2] != obstacles.PENGUIN and vision[0][2] != obstacles.NONE):
-            fin = 3
-            act.remove(actions.RIGHT)
-        for i in range(st,fin):
-            for cur in GoodList:
-                if obst != None:
-                    if GoodList.index(obst) <= GoodList.index(cur):
-                        break
-                if vision[2][2+i] == cur and (vision[1][i+1] == obstacles.NONE or vision[1][i+1] == obstacles.PENGUIN):
-                    if i<=(fin+st/2):
-                        return act[0]
-                    else:
-                        return act[-1]
-        if best != -1:
-            return ActionList[best]
+                    return ActionList[i]
         #what he does if there is an obstacle in front of him.
         if vision[0][1] != obstacles.NONE:
             if vision[0][0] == obstacles.NONE:
