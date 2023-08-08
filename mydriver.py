@@ -2,6 +2,22 @@ from rose.common import obstacles, actions  # NOQA
 
 driver_name = "Amir"
 
+loose_points = [obstacles.TRASH, obstacles.BIKE, obstacles.BARRIER]
+
+
+def obstacle_score_finder(obstacle):
+    if obstacle == obstacles.PENGUIN:
+        return 10
+    if obstacle == obstacles.CRACK:
+        return 5
+    if obstacle == obstacles.WATER:
+        return 4
+    if obstacle in loose_points:
+        return -10
+    if obstacle == obstacles.NONE:
+        return 0
+
+
 
 
 
@@ -27,10 +43,10 @@ def drive(world):
             return actions.LEFT
         if world.get((x + 1, y - 2)) == obstacles.PENGUIN and world.get((x + 1, y - 1)) not in harm:
             return actions.RIGHT
-        if world.get((x - 1, y - 3)) == obstacles.PENGUIN and world.get((x - 1, y - 1)) not in harm and world.get((x - 1, y - 2)) not in harm:
-            return actions.LEFT
-        if world.get((x + 1, y - 3)) == obstacles.PENGUIN and world.get((x + 1, y - 1)) not in harm and world.get((x + 1, y - 2)) not in harm:
-            return actions.RIGHT
+        # if world.get((x - 1, y - 3)) == obstacles.PENGUIN and world.get((x - 1, y - 1)) not in harm and world.get((x - 1, y - 2)) not in harm:
+        #     return actions.NONE
+        # if world.get((x + 1, y - 3)) == obstacles.PENGUIN and world.get((x + 1, y - 1)) not in harm and world.get((x + 1, y - 2)) not in harm:
+        #     return actions.NONE
 
     if pls == 'R':
         if world.get((x, y - 1)) == obstacles.PENGUIN:
@@ -89,12 +105,10 @@ def drive(world):
     # harm chek:
     if pls == 'M':
         if world.get((x, y - 1)) in harm:
-            if world.get((x - 1, y - 1)) not in harm:
+            if (obstacle_score_finder(world.get((x - 1, y - 2))) + obstacle_score_finder(world.get((x - 1, y - 3)))) >= (obstacle_score_finder(world.get((x + 1, y - 2))) + obstacle_score_finder(world.get((x + 1, y - 3)))):
                 return actions.LEFT
-            if world.get((x + 1, y - 1)) not in harm:
-                return actions.RIGHT
             else:
-                return actions.NONE
+                return actions.RIGHT
 
 
     if pls == 'R':
@@ -105,7 +119,6 @@ def drive(world):
     if pls == 'L':
         if world.get((x, y - 1)) in harm:
             return actions.RIGHT
-
 
     # defult:
     if pls == 'M':
