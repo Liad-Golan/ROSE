@@ -27,6 +27,10 @@ def drive(world):
             return actions.LEFT
         if world.get((x + 1, y - 2)) == obstacles.PENGUIN and world.get((x + 1, y - 1)) not in harm:
             return actions.RIGHT
+        if world.get((x - 1, y - 3)) == obstacles.PENGUIN and world.get((x - 1, y - 1)) not in harm and world.get((x - 1, y - 2)) not in harm:
+            return actions.LEFT
+        if world.get((x + 1, y - 3)) == obstacles.PENGUIN and world.get((x + 1, y - 1)) not in harm and world.get((x + 1, y - 2)) not in harm:
+            return actions.RIGHT
 
     if pls == 'R':
         if world.get((x, y - 1)) == obstacles.PENGUIN:
@@ -89,7 +93,9 @@ def drive(world):
                 return actions.LEFT
             if world.get((x + 1, y - 1)) not in harm:
                 return actions.RIGHT
-        return actions.NONE
+            else:
+                return actions.NONE
+
 
     if pls == 'R':
         if world.get((x, y - 1)) in harm:
@@ -108,3 +114,4 @@ def drive(world):
         return actions.LEFT
     if pls == 'L' and world.get((x+1, y-1)) not in harm:
         return actions.RIGHT
+    return actions.NONE
