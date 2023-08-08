@@ -60,27 +60,38 @@ def drive(world):
             if found:
                 break
         st = 0
-        fin = 5
+        fin = 4
         act = [actions.LEFT,actions.NONE,actions.RIGHT]
         if (vision[0][0] != obstacles.PENGUIN and vision[0][0] != obstacles.NONE):
             st = 1
             act.remove(actions.LEFT)
         elif (vision[0][2] != obstacles.PENGUIN and vision[0][2] != obstacles.NONE):
-            fin = 4
+            fin = 3
             act.remove(actions.RIGHT)
         for i in range(st,fin):
             for cur in GoodList:
                 if obst != None:
                     if GoodList.index(obst) <= GoodList.index(cur):
                         break
-                if vision[2][2+i] == cur:
+                if vision[2][i+2] == cur:
                     if i == st or i == fin:
-                        pass
-                    if (vision[1][i+1] == obstacles.NONE or vision[1][i+1] == obstacles.PENGUIN):
-                    if i<=((fin+st)/2):
-                        return act[0]
+                        if (vision[1][i+1] == obstacles.NONE or vision[1][i+1] == obstacles.PENGUIN):
+                            if i <= ((fin + st) / 2):
+                                return act[0]
+                            else:
+                                return act[-1]
                     else:
-                        return act[-1]
+                        print(i)
+                        print(vision)
+                        if (vision[1][i+1 ] in GoodList):
+                            if (vision[0][i] == obstacles.NONE or vision[0][i] == obstacles.PENGUIN):
+                                return ActionList[i]
+                        else:
+                            if (vision[1][i + 1] == obstacles.NONE or vision[1][i + 1] == obstacles.PENGUIN):
+                                if i <= ((fin + st) / 2):
+                                    return act[0]
+                                else:
+                                    return act[-1]
         if best != -1:
             return ActionList[best]
         #what he does if there is an obstacle in front of him.
