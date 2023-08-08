@@ -1,110 +1,110 @@
 from rose.common import obstacles, actions  # NOQA
 
-driver_name = "Itay(maybe good?)"
-find2 = True
-GoodList = [obstacles.PENGUIN,obstacles.CRACK,obstacles.WATER] #obstacles that earn points
-ActionList = [actions.LEFT,actions.NONE,actions.RIGHT]
-def worthcheck(world):
-    return False
+driver_name = "Amir"
+
+
+
 
 def drive(world):
-    global find2
-    global home
-    vision = []
-    if find2:
-        find2 = False
-        home = (world.car.x,world.car.y)
-    pos = (world.car.x,world.car.y)
-    #"scanns"
-    for i in range(1,4): # i = line we're checking
-        list = []
-        for j in range(1+2*(i)): #j = square in line we're cheking
-            if (pos[0]-i+j>=0) and (pos[0]-i+j<=5):
-                list.append(world.get((pos[0]-i+j,pos[1]-i)))
-            else:
-                list.append("B")
-        vision.append(list) #  vision = list of all the obstacles in front of us
-    #add a worthy path finder
-    worth = worthcheck(world)
-    if worth:
-        pass
-    else: #what to do if there isn't a worthy prize in sight(deafult)
-        #point greedy
-        if vision[0][1] == obstacles.PENGUIN:
+    pls = 'M'
+    harm = [obstacles.WATER, obstacles.CRACK, obstacles.TRASH, obstacles.BIKE, obstacles.BARRIER]
+    bad_harm_water = [obstacles.TRASH, obstacles.BIKE, obstacles.BARRIER, obstacles.WATER]
+    bad_harm_crack = [obstacles.TRASH, obstacles.BIKE, obstacles.BARRIER, obstacles.CRACK]
+    not_harm = [obstacles.PENGUIN]
+    x = world.car.x
+    y = world.car.y
+    if x == 0 or x == 3:
+        pls = 'L'
+    elif x == 2 or x == 5:
+        pls = 'R'
+    else:
+        pls = 'M'
+    # penguin chek:
+    if pls == 'M':
+        if world.get((x, y - 1)) == obstacles.PENGUIN:
             return actions.PICKUP
-        if vision[0][1] == obstacles.CRACK:
-            return actions.JUMP
-        if vision[0][1] == obstacles.WATER:
-            return actions.BRAKE
-
-        #does what it must
-        if (vision[0][1] != obstacles.NONE):
-            if (vision[0][0] != obstacles.NONE and vision[0][0] != obstacles.PENGUIN):
-                return actions.RIGHT
-            elif vision[0][2] != obstacles.NONE and vision[0][2] != obstacles.PENGUIN:
-                return actions.LEFT
-        if (vision[0][0] != obstacles.NONE and vision[0][0] != obstacles.PENGUIN) and (vision[0][2] != obstacles.NONE and vision[0][2] != obstacles.PENGUIN):
-            return actions.NONE
-        best = -1
-        obst = None
-        found = False
-        for i in range(3):
-            for cur in GoodList:
-                if vision[1][i+1] == cur and (vision[0][i] == obstacles.NONE or vision[0][i] == obstacles.PENGUIN):
-                    found = True
-                    best = i
-                    obst = cur
-                    if cur == GoodList[0]:
-                        return ActionList[i]
-                    break
-            if found:
-                break
-        st = 0
-        fin = 4
-        act = [actions.LEFT,actions.NONE,actions.RIGHT]
-        if (vision[0][0] != obstacles.PENGUIN and vision[0][0] != obstacles.NONE):
-            st = 1
-            act.remove(actions.LEFT)
-        elif (vision[0][2] != obstacles.PENGUIN and vision[0][2] != obstacles.NONE):
-            fin = 3
-            act.remove(actions.RIGHT)
-        for i in range(st,fin):
-            for cur in GoodList:
-                if obst != None:
-                    if GoodList.index(obst) <= GoodList.index(cur):
-                        break
-                if vision[2][i+2] == cur:
-                    if i == st or i == fin:
-                        if (vision[1][i+1] == obstacles.NONE or vision[1][i+1] == obstacles.PENGUIN):
-                            if i <= ((fin + st) / 2):
-                                return act[0]
-                            else:
-                                return act[-1]
-                    else:
-                        print(i)
-                        print(vision)
-                        if (vision[1][i+1 ] in GoodList):
-                            if (vision[0][i] == obstacles.NONE or vision[0][i] == obstacles.PENGUIN):
-                                return ActionList[i]
-                        else:
-                            if (vision[1][i + 1] == obstacles.NONE or vision[1][i + 1] == obstacles.PENGUIN):
-                                if i <= ((fin + st) / 2):
-                                    return act[0]
-                                else:
-                                    return act[-1]
-        if best != -1:
-            return ActionList[best]
-        #what he does if there is an obstacle in front of him.
-        if vision[0][1] != obstacles.NONE:
-            if vision[0][0] == obstacles.NONE:
-                return actions.LEFT
-            elif vision[0][2] == obstacles.NONE:
-                return  actions.RIGHT
-        # else.
-        if pos[0] < home[0] and vision[0][2] == obstacles.NONE:
-            return actions.RIGHT
-        if pos[0] > home[0] and vision[0][0] == obstacles.NONE:
+        if world.get((x - 1, y - 2)) == obstacles.PENGUIN and world.get((x - 1, y - 1)) not in harm:
             return actions.LEFT
-    return actions.NONE 
+        if world.get((x + 1, y - 2)) == obstacles.PENGUIN and world.get((x + 1, y - 1)) not in harm:
+            return actions.RIGHT
 
-#python rose-client -s 128.52.61.161 mydriver.py
+    if pls == 'R':
+        if world.get((x, y - 1)) == obstacles.PENGUIN:
+            return actions.PICKUP
+        if world.get((x - 1, y - 2)) == obstacles.PENGUIN and world.get((x - 1, y - 1)) not in harm:
+            return actions.LEFT
+
+    if pls == 'L':
+        if world.get((x, y - 1)) == obstacles.PENGUIN:
+            return actions.PICKUP
+        if world.get((x + 1, y - 2)) == obstacles.PENGUIN and world.get((x + 1, y - 1)) not in harm:
+            return actions.RIGHT
+
+    # crack chek:
+    if pls == 'M':
+        if world.get((x, y - 1)) == obstacles.CRACK:
+            return actions.JUMP
+        if world.get((x - 1, y - 2)) == obstacles.CRACK and world.get((x - 1, y - 1)) not in bad_harm_water:
+            return actions.LEFT
+        if world.get((x + 1, y - 2)) == obstacles.CRACK and world.get((x + 1, y - 1)) not in bad_harm_water:
+            return actions.RIGHT
+
+    if pls == 'R':
+        if world.get((x, y - 1)) == obstacles.CRACK:
+            return actions.JUMP
+        if world.get((x - 1, y - 2)) == obstacles.CRACK and world.get((x - 1, y - 1)) not in bad_harm_water:
+            return actions.LEFT
+
+    if pls == 'L':
+        if world.get((x, y - 1)) == obstacles.CRACK:
+            return actions.JUMP
+        if world.get((x + 1, y - 2)) == obstacles.CRACK and world.get((x + 1, y - 1)) not in bad_harm_water:
+            return actions.RIGHT
+
+    # water chek:
+    if pls == 'M':
+        if world.get((x, y - 1)) == obstacles.WATER:
+            return actions.BRAKE
+        if world.get((x - 1, y - 2)) == obstacles.WATER and world.get((x - 1, y - 1)) not in bad_harm_crack:
+            return actions.LEFT
+        if world.get((x + 1, y - 2)) == obstacles.WATER and world.get((x + 1, y - 1)) not in bad_harm_crack:
+            return actions.RIGHT
+
+    if pls == 'R':
+        if world.get((x, y - 1)) == obstacles.WATER:
+            return actions.BRAKE
+        if world.get((x - 1, y - 2)) == obstacles.WATER and world.get((x - 1, y - 1)) not in bad_harm_crack:
+            return actions.LEFT
+
+    if pls == 'L':
+        if world.get((x, y - 1)) == obstacles.WATER:
+            return actions.BRAKE
+        if world.get((x + 1, y - 2)) == obstacles.WATER and world.get((x + 1, y - 1)) not in bad_harm_crack:
+            return actions.RIGHT
+
+    # harm chek:
+    if pls == 'M':
+        if world.get((x, y - 1)) in harm:
+            if world.get((x - 1, y - 1)) not in harm:
+                return actions.LEFT
+            if world.get((x + 1, y - 1)) not in harm:
+                return actions.RIGHT
+        return actions.NONE
+
+    if pls == 'R':
+        if world.get((x, y - 1)) in harm:
+            return actions.LEFT
+
+
+    if pls == 'L':
+        if world.get((x, y - 1)) in harm:
+            return actions.RIGHT
+
+
+    # defult:
+    if pls == 'M':
+        return actions.NONE
+    if pls == 'R' and world.get((x-1, y-1)) not in harm:
+        return actions.LEFT
+    if pls == 'L' and world.get((x+1, y-1)) not in harm:
+        return actions.RIGHT
