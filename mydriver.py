@@ -1,7 +1,6 @@
 from rose.common import obstacles, actions  # NOQA
 
 driver_name = "Itay(maybe good?)"
-
 find2 = True
 GoodList = [obstacles.PENGUIN,obstacles.CRACK,obstacles.WATER] #obstacles that earn points
 ActionList = [actions.LEFT,actions.NONE,actions.RIGHT]
@@ -37,6 +36,7 @@ def drive(world):
             return actions.JUMP
         if vision[0][1] == obstacles.WATER:
             return actions.BRAKE
+
         #does what it must
         if (vision[0][1] != obstacles.NONE):
             if (vision[0][0] != obstacles.NONE and vision[0][0] != obstacles.PENGUIN):
@@ -60,20 +60,23 @@ def drive(world):
             if found:
                 break
         st = 0
-        fin = 4
+        fin = 5
         act = [actions.LEFT,actions.NONE,actions.RIGHT]
         if (vision[0][0] != obstacles.PENGUIN and vision[0][0] != obstacles.NONE):
             st = 1
             act.remove(actions.LEFT)
         elif (vision[0][2] != obstacles.PENGUIN and vision[0][2] != obstacles.NONE):
-            fin = 3
+            fin = 4
             act.remove(actions.RIGHT)
         for i in range(st,fin):
             for cur in GoodList:
                 if obst != None:
                     if GoodList.index(obst) <= GoodList.index(cur):
                         break
-                if vision[2][2+i] == cur and (vision[1][i+1] == obstacles.NONE or vision[1][i+1] == obstacles.PENGUIN):
+                if vision[2][2+i] == cur:
+                    if i == st or i == fin:
+                        pass
+                    if (vision[1][i+1] == obstacles.NONE or vision[1][i+1] == obstacles.PENGUIN):
                     if i<=((fin+st)/2):
                         return act[0]
                     else:
