@@ -53,13 +53,13 @@ class Track(object):
         Otherwise, the tracks will be identical.
         """
         row = [obstacles.NONE] * config.matrix_width
-        obstacle = obstacles.get_random_obstacle()
+        obstacle = obstacles.get_random_obstacle() #choses a random obsticle
         if config.is_track_random:
-            for lane in range(config.max_players):
-                low = lane * config.cells_per_player
-                high = low + config.cells_per_player
-                cell = random.choice(range(low, high))
-                row[cell] = obstacle
+            for player in range(config.max_players): #does these actions for every player.
+                low = player * config.cells_per_player #low is the closest lane to the left of a player.
+                high = low + config.cells_per_player #high is the closest lane to the left of the player + 1.
+                cell = random.choice(range(low, high)) # picks a random cell/lane from the players lane
+                row[cell] = obstacle #changes the picked cell to be the previously chosen obstacle
         else:
             cell = random.choice(range(0, config.cells_per_player))
             for lane in range(config.max_players):
